@@ -1,0 +1,9 @@
+1. gem 'httparty' added.
+2. .env created and added to .gitignore.
+3. app/services folder created.
+4. Service class created to handle base_uri, headers, and errors.
+5. Controller calls Service class.
+6. View displays the result.
+
+----FLOW OF 3RD PARTY API INTEGRATION IN RAILS 8----
+dfsaur

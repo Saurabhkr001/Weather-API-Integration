@@ -1,0 +1,25 @@
+# config/database.yml
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  # For local development, standard Postgres usually doesn't require
+  # a username/password if your system user matches the database user.
+  # If you have a specific user/pass, uncomment below:
+  # username: your_username
+  # password: your_password
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: demo_project_development
+
+test:
+  <<: *default
+  database: demo_project_test
+
+production:
+  <<: *default
+  database: demo_project_production
+  username: demo_project
+  password: <%= ENV["DEMO_PROJECT_DATABASE_PASSWORD"] %>

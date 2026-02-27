@@ -1,0 +1,123 @@
+<!-- The Header is OUTSIDE the turbo-frame, so it never reloads -->
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      
+      <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-primary">Weather Lookup</h1>
+        <p class="lead text-muted">Enter a city to check current conditions.</p>
+      </div>
+
+      <!-- START TURBO FRAME -->
+      <!-- The id must be unique. We will tell the form to target this ID. -->
+      <%= turbo_frame_tag "weather_result" do %>
+        
+        <div class="row g-4">
+          
+          <!-- LEFT COLUMN: Search Form -->
+          <div class="col-md-5 col-lg-4">
+            <div class="card shadow-sm border-0 h-100">
+              <div class="card-body bg-light rounded d-flex flex-column justify-content-center">
+                <h4 class="card-title mb-4 text-center fw-semibold">Search</h4>
+                
+                <%# NOTE: We removed 'local: true' to enable Turbo! %>
+                <%= form_with(url: root_path, method: :get) do |form| %>
+                  <div class="mb-3">
+                    <%= form.label :city, "City Name", class: "form-label text-muted small text-uppercase fw-bold" %>
+                    <%= form.text_field :city, 
+                                        placeholder: "e.g., London", 
+                                        value: params[:city], 
+                                        class: "form-control form-control-lg border-0 shadow-sm",
+                                        required: true %>
+                  </div>
+                  <div class="d-grid">
+                    <%= form.submit "Check Weather", class: "btn btn-primary btn-lg shadow-sm" %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT COLUMN: Results or Placeholder -->
+          <div class="col-md-7 col-lg-8">
+            
+            <% if @weather_data.present? %>
+              
+              <% if @weather_data['error'] %>
+                <!-- Error State -->
+                <div class="alert alert-danger h-100 d-flex align-items-center justify-content-center" role="alert">
+                  <div class="text-center">
+                    <h4 class="alert-heading">Oops!</h4>
+                    <p><%= @weather_data['error'] %></p>
+                  </div>
+                </div>
+              
+              <% else %>
+                <!-- Weather Result Card -->
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden h-100">
+                  <!-- ... (Keep your result card HTML exactly as it is) ... -->
+                  <div class="bg-primary text-white text-center py-3">
+                    <h2 class="fw-bold mb-0">
+                      <%= @weather_data['name'] %>, <%= @weather_data['sys']['country'] %>
+                    </h2>
+                    <small><%= Time.now.strftime("%A, %B %d") %></small>
+                  </div>
+
+                  <div class="card-body p-0">
+                    <div class="row g-0 align-items-center py-4 px-3">
+                      <div class="col-5 text-center">
+                        <% icon_code = @weather_data['weather'][0]['icon'] %>
+                        <%= image_tag "https://openweathermap.org/img/wn/#{icon_code}@4x.png", 
+                                      alt: "Weather Icon", 
+                                      class: "img-fluid" %>
+                      </div>
+                      <div class="col-7 text-center">
+                        <span class="display-2 fw-bold d-block">
+                          <%= @weather_data['main']['temp'].round %>°C
+                        </span>
+                        <span class="text-muted text-uppercase fs-5">
+                          <%= @weather_data['weather'][0]['description'] %>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="row text-center bg-light border-top g-0">
+                      <div class="col-4 py-3 border-end">
+                        <div class="text-muted small text-uppercase">Feels Like</div>
+                        <div class="fs-5 fw-semibold"><%= @weather_data['main']['feels_like'].round %>°</div>
+                      </div>
+                      <div class="col-4 py-3 border-end">
+                        <div class="text-muted small text-uppercase">Humidity</div>
+                        <div class="fs-5 fw-semibold"><%= @weather_data['main']['humidity'] %>%</div>
+                      </div>
+                      <div class="col-4 py-3">
+                        <div class="text-muted small text-uppercase">Wind</div>
+                        <div class="fs-5 fw-semibold"><%= @weather_data['wind']['speed'] %> m/s</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+
+            <% else %>
+              <!-- Empty State (When page first loads) -->
+              <div class="text-center text-muted h-100 d-flex align-items-center justify-content-center border rounded-3 bg-white shadow-sm p-5">
+                <div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-geo-alt text-primary mb-3" viewBox="0 0 16 16">
+                    <path d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM4 4a4 4 0 1 1 4.5 3.969V11.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.492 8.369L8 14.293l1.508-1.924a.5.5 0 0 1 .764.629l-1.5 1.924a.5.5 0 0 1-.764 0l-1.5-1.924a.5.5 0 0 1 .764-.629z"/>
+                  </svg>
+                  <h5 class="fw-normal">Awaiting Input</h5>
+                  <p class="mb-0 small">Enter a location on the left to see the weather report here.</p>
+                </div>
+              </div>
+            <% end %>
+
+          </div>
+        </div>
+
+      <% end %>
+      <!-- END TURBO FRAME -->
+
+    </div>
+  </div>
+</div>
